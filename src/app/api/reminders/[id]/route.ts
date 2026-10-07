@@ -29,6 +29,8 @@ export async function PUT(req: Request, ctx: Ctx) {
     runAt: data.runAt ? new Date(data.runAt) : null,
     timeOfDay: data.timeOfDay ?? null,
     daysOfWeek: data.daysOfWeek ? data.daysOfWeek.join(",") : null,
+    dayOfMonth: data.mode === "MONTHLY" || data.mode === "YEARLY" ? data.dayOfMonth ?? null : null,
+    monthOfYear: data.mode === "YEARLY" ? data.monthOfYear ?? null : null,
   };
   const enabled = data.enabled ?? true;
   const nextRunAt = enabled ? computeNextRunAt(schedule, tz, new Date()) : null;
@@ -47,6 +49,8 @@ export async function PUT(req: Request, ctx: Ctx) {
       runAt: schedule.runAt,
       timeOfDay: schedule.timeOfDay,
       daysOfWeek: schedule.daysOfWeek,
+      dayOfMonth: schedule.dayOfMonth,
+      monthOfYear: schedule.monthOfYear,
       chatId: chat.id,
       enabled,
       nextRunAt,

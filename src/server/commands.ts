@@ -16,9 +16,21 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function scheduleLabel(r: { mode: string; runAt: Date | null; timeOfDay: string | null; daysOfWeek: string | null }): string {
+function scheduleLabel(r: {
+  mode: string;
+  runAt: Date | null;
+  timeOfDay: string | null;
+  daysOfWeek: string | null;
+  dayOfMonth: number | null;
+  monthOfYear: number | null;
+}): string {
   if (r.mode === "ONCE") return r.runAt ? r.runAt.toLocaleString() : "-";
   if (r.mode === "WEEKLY") return `${r.timeOfDay ?? "-"} (${formatDaysOfWeek(r.daysOfWeek)})`;
+  if (r.mode === "MONTHLY") return `${r.timeOfDay ?? "-"} (day ${r.dayOfMonth ?? "?"} each month)`;
+  if (r.mode === "YEARLY") {
+    const month = r.monthOfYear ? String(r.monthOfYear).padStart(2, "0") : "?";
+    return `${r.timeOfDay ?? "-"} (${month}/${r.dayOfMonth ?? "?"})`;
+  }
   return r.timeOfDay ?? "-";
 }
 

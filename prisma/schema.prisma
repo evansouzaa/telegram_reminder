@@ -24,6 +24,8 @@ model Reminder {
   runAt          DateTime?
   timeOfDay      String?
   daysOfWeek     String?
+  dayOfMonth     Int?
+  monthOfYear    Int?
   chat           TelegramChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
   chatId         Int
   enabled        Boolean    @default(true)

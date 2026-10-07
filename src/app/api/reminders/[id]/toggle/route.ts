@@ -27,6 +27,8 @@ export async function POST(req: Request, ctx: Ctx) {
       runAt: existing.runAt,
       timeOfDay: existing.timeOfDay,
       daysOfWeek: existing.daysOfWeek,
+      dayOfMonth: existing.dayOfMonth,
+      monthOfYear: existing.monthOfYear,
     };
     if (schedule.mode === "ONCE") {
       if (!schedule.runAt || schedule.runAt.getTime() <= now.getTime()) {

@@ -6,10 +6,12 @@ import type { ChatView, ReminderView } from "@/lib/dto";
 
 type FormState = {
   message: string;
-  mode: "ONCE" | "DAILY" | "WEEKLY";
+  mode: "ONCE" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
   runAt: string;
   timeOfDay: string;
   days: number[];
+  dayOfMonth: number;
+  monthOfYear: number;
   chatId: number;
   parseMode: "" | "HTML" | "MarkdownV2";
   silent: boolean;
@@ -26,6 +28,21 @@ const WEEKDAYS = [
   { value: 6, label: "Sat" },
 ];
 
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
 function emptyForm(chatId: number): FormState {
   return {
     message: "",
@@ -33,6 +50,8 @@ function emptyForm(chatId: number): FormState {
     runAt: "",
     timeOfDay: "09:00",
     days: [1],
+    dayOfMonth: 1,
+    monthOfYear: new Date().getMonth() + 1,
     chatId,
     parseMode: "",
     silent: false,
@@ -57,6 +76,13 @@ function scheduleLabel(r: ReminderView): string {
   if (r.mode === "WEEKLY") {
     const names = WEEKDAYS.filter((w) => r.daysOfWeek?.includes(w.value)).map((w) => w.label);
     return `${r.timeOfDay} (${names.join(", ")})`;
+  }
+  if (r.mode === "MONTHLY") {
+    return `${r.timeOfDay} (day ${r.dayOfMonth ?? "?"} of each month)`;
+  }
+  if (r.mode === "YEARLY") {
+    const month = r.monthOfYear ? MONTHS[r.monthOfYear - 1] : "?";
+    return `${r.timeOfDay} (${month} ${r.dayOfMonth ?? "?"})`;
   }
   return `daily at ${r.timeOfDay}`;
 }
@@ -100,6 +126,8 @@ export default function RemindersClient({
       runAt: toLocalInput(r.runAt),
       timeOfDay: r.timeOfDay ?? "09:00",
       days: r.daysOfWeek ?? [1],
+      dayOfMonth: r.dayOfMonth ?? 1,
+      monthOfYear: r.monthOfYear ?? new Date().getMonth() + 1,
       chatId: r.chatId,
       parseMode: r.parseMode as FormState["parseMode"],
       silent: r.silent,
@@ -138,6 +166,14 @@ export default function RemindersClient({
       setError("Pick at least one weekday");
       return;
     }
+    if ((form.mode === "MONTHLY" || form.mode === "YEARLY") && (form.dayOfMonth < 1 || form.dayOfMonth > 31)) {
+      setError("Pick a day of the month between 1 and 31");
+      return;
+    }
+    if (form.mode === "YEARLY" && (form.monthOfYear < 1 || form.monthOfYear > 12)) {
+      setError("Pick a month");
+      return;
+    }
 
     setBusy(true);
     try {
@@ -160,6 +196,8 @@ export default function RemindersClient({
         runAt: form.mode === "ONCE" ? new Date(form.runAt).toISOString() : null,
         timeOfDay: form.mode === "ONCE" ? null : form.timeOfDay,
         daysOfWeek: form.mode === "WEEKLY" ? form.days : null,
+        dayOfMonth: form.mode === "MONTHLY" || form.mode === "YEARLY" ? form.dayOfMonth : null,
+        monthOfYear: form.mode === "YEARLY" ? form.monthOfYear : null,
         chatId: form.chatId,
         parseMode: form.parseMode,
         silent: form.silent,
@@ -273,6 +311,8 @@ export default function RemindersClient({
                 <option value="ONCE">One time</option>
                 <option value="DAILY">Every day</option>
                 <option value="WEEKLY">Certain weekdays</option>
+                <option value="MONTHLY">Day of each month</option>
+                <option value="YEARLY">Day of each year</option>
               </select>
             </div>
           </div>
@@ -325,6 +365,59 @@ export default function RemindersClient({
                     ))}
                   </div>
                 </div>
+              )}
+              {form.mode === "MONTHLY" && (
+                <div className="field">
+                  <label htmlFor="dayOfMonth">Day of month</label>
+                  <select
+                    id="dayOfMonth"
+                    className="select"
+                    value={form.dayOfMonth}
+                    onChange={(e) => set("dayOfMonth", Number(e.target.value))}
+                  >
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="hint">Months without this day fire on the last day.</span>
+                </div>
+              )}
+              {form.mode === "YEARLY" && (
+                <>
+                  <div className="field">
+                    <label htmlFor="monthOfYear">Month</label>
+                    <select
+                      id="monthOfYear"
+                      className="select"
+                      value={form.monthOfYear}
+                      onChange={(e) => set("monthOfYear", Number(e.target.value))}
+                    >
+                      {MONTHS.map((m, i) => (
+                        <option key={m} value={i + 1}>
+                          {m}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="field">
+                    <label htmlFor="dayOfMonth">Day</label>
+                    <select
+                      id="dayOfMonth"
+                      className="select"
+                      value={form.dayOfMonth}
+                      onChange={(e) => set("dayOfMonth", Number(e.target.value))}
+                    >
+                      {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                        <option key={d} value={d}>
+                          {d}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="hint">Months without this day fire on the last day.</span>
+                  </div>
+                </>
               )}
             </div>
           )}

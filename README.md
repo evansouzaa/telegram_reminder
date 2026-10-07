@@ -5,7 +5,7 @@ Local reminder scheduler that sends messages to Telegram through a bot you contr
 - Next.js (App Router) UI + REST API
 - SQLite via Prisma (`prisma/dev.db`)
 - Separate worker process: Telegram long polling + reminder scheduler
-- One-time, daily and weekly reminders, with optional attachment (photo/audio/document)
+- One-time, daily, weekly, monthly and yearly reminders, with optional attachment (photo/audio/document)
 
 ## Setup
 

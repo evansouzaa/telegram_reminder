@@ -94,3 +94,11 @@ export function addCalendarDays(year: number, month: number, day: number, days: 
     weekday: d.getUTCDay(),
   };
 }
+
+export function daysInMonth(year: number, month: number): number {
+  return new Date(Date.UTC(year, month, 0)).getUTCDate();
+}
+
+export function nextMonth(year: number, month: number): { year: number; month: number } {
+  return month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
+}

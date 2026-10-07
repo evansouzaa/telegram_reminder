@@ -1,10 +1,12 @@
 export type ReminderView = {
   id: number;
   message: string;
-  mode: "ONCE" | "DAILY" | "WEEKLY";
+  mode: "ONCE" | "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
   runAt: string | null;
   timeOfDay: string | null;
   daysOfWeek: number[] | null;
+  dayOfMonth: number | null;
+  monthOfYear: number | null;
   chatId: number;
   chatTitle: string;
   enabled: boolean;
@@ -40,6 +42,8 @@ type ReminderRow = {
   runAt: Date | null;
   timeOfDay: string | null;
   daysOfWeek: string | null;
+  dayOfMonth: number | null;
+  monthOfYear: number | null;
   chatId: number;
   enabled: boolean;
   nextRunAt: Date | null;
@@ -78,6 +82,8 @@ export function toReminderView(row: ReminderRow): ReminderView {
     runAt: row.runAt?.toISOString() ?? null,
     timeOfDay: row.timeOfDay,
     daysOfWeek: row.daysOfWeek ? row.daysOfWeek.split(",").filter(Boolean).map(Number) : null,
+    dayOfMonth: row.dayOfMonth,
+    monthOfYear: row.monthOfYear,
     chatId: row.chatId,
     chatTitle: row.chat?.title ?? "",
     enabled: row.enabled,
