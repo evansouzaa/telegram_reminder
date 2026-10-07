@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model TelegramChat {
+  id        Int        @id @default(autoincrement())
+  chatId    String     @unique
+  title     String
+  isActive  Boolean    @default(true)
+  linkedAt  DateTime   @default(now())
+  reminders Reminder[]
+}
+
+model Reminder {
+  id             Int        @id @default(autoincrement())
+  message        String
+  mode           String
+  runAt          DateTime?
+  timeOfDay      String?
+  daysOfWeek     String?
+  chat           TelegramChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId         Int
+  enabled        Boolean    @default(true)
+  retryCount     Int        @default(0)
+  nextRunAt      DateTime?
+  lastRunAt      DateTime?
+  parseMode      String     @default("")
+  silent         Boolean    @default(false)
+  attachmentPath String?
+  attachmentKind String?
+  attachmentName String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  logs           SendLog[]
+
+  @@index([enabled, nextRunAt])
+}
+
+model SendLog {
+  id         Int       @id @default(autoincrement())
+  reminder   Reminder? @relation(fields: [reminderId], references: [id], onDelete: SetNull)
+  reminderId Int?
+  chatId     String
+  status     String
+  detail     String?
+  sentAt     DateTime  @default(now())
+
+  @@index([sentAt])
+}
+
+model Setting {
+  key   String @id
+  value String
+}
