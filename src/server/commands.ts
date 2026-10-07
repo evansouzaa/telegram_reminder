@@ -54,7 +54,7 @@ export async function handleUpdate(update: TelegramUpdate): Promise<void> {
       });
       await sendMessage({
         chatId,
-        text: `Linked "${title}" to Telegran Reminder (id ${chat.id}).\n\n${HELP_TEXT}`,
+        text: `Linked "${title}" to Telegram Reminder (id ${chat.id}).\n\n${HELP_TEXT}`,
       });
       return;
     }
@@ -63,7 +63,7 @@ export async function handleUpdate(update: TelegramUpdate): Promise<void> {
       return;
     }
     case "/test": {
-      await sendMessage({ chatId, text: "Test message from Telegran Reminder. This chat is linked." });
+      await sendMessage({ chatId, text: "Test message from Telegram Reminder. This chat is linked." });
       return;
     }
     case "/list": {

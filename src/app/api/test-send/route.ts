@@ -19,6 +19,6 @@ export async function POST(req: Request) {
     if (!chat) return jsonError(404, "No linked chat yet - open the bot and send /start");
   }
 
-  await sendMessage({ chatId: chat.chatId, text: "Test message from Telegran Reminder." });
+  await sendMessage({ chatId: chat.chatId, text: "Test message from Telegram Reminder." });
   return NextResponse.json({ ok: true, chatId: chat.id });
 }

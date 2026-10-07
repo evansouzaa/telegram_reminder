@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NavLinks from "@/components/NavLinks";
+import BrandMark from "@/components/BrandMark";
 
 export const metadata: Metadata = {
-  title: "Telegran Reminder",
+  title: "Telegram Reminder",
   description: "Local Telegram reminder scheduler",
 };
 
@@ -20,8 +21,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <header className="app-header">
           <div className="brand">
-            <span className="brand-dot" />
-            Telegran Reminder
+            <span className="brand-mark">
+              <BrandMark size={22} />
+            </span>
+            Telegram Reminder
           </div>
           <nav className="app-nav">
             <NavLinks items={NAV} />

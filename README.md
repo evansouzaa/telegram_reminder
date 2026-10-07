@@ -1,4 +1,4 @@
-# Telegran Reminder
+# Telegram Reminder
 
 Local reminder scheduler that sends messages to Telegram through a bot you control.
 
