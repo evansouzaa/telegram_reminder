@@ -63,8 +63,17 @@ export const toggleSchema = z.object({
   enabled: z.boolean(),
 });
 
-export const settingsSchema = z.object({
-  timezone: z.string().min(1).refine(isValidTimeZone, "Unknown IANA timezone"),
+export const settingsSchema = z
+  .object({
+    timezone: z.string().min(1).refine(isValidTimeZone, "Unknown IANA timezone").optional(),
+    botToken: z.string().max(200).optional(),
+  })
+  .refine((value) => value.timezone !== undefined || value.botToken !== undefined, {
+    message: "Nothing to update",
+  });
+
+export const linkChatSchema = z.object({
+  telegramChatId: z.string().regex(/^-?\d{1,20}$/, "Chat id must be numeric, e.g. 123456789"),
 });
 
 export const testSendSchema = z.object({

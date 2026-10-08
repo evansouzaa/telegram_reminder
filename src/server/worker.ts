@@ -68,8 +68,8 @@ async function handleDueReminder(reminder: Reminder, chat: TelegramChat, now: Da
     return;
   }
 
-  if (!getBotToken()) {
-    await logSend(reminder, chat, "FAILED", "TELEGRAM_BOT_TOKEN is not configured");
+  if (!(await getBotToken())) {
+    await logSend(reminder, chat, "FAILED", "Telegram bot token is not configured - add it in Settings");
     return;
   }
 
@@ -114,7 +114,7 @@ async function schedulerTick(): Promise<void> {
     });
 
     for (const reminder of due) {
-      if (!getBotToken()) break;
+      if (!(await getBotToken())) break;
       const claimed = await db.reminder.updateMany({
         where: { id: reminder.id, enabled: true, nextRunAt: reminder.nextRunAt },
         data: {
@@ -132,8 +132,8 @@ async function schedulerTick(): Promise<void> {
 }
 
 async function initializeBot(): Promise<void> {
-  if (!getBotToken()) {
-    log("TELEGRAM_BOT_TOKEN is not set - polling and sending are disabled. Add it to .env and restart.");
+  if (!(await getBotToken())) {
+    log("Telegram bot token is not set - polling and sending are disabled. Add it in Settings.");
     return;
   }
   try {
@@ -171,7 +171,7 @@ async function main(): Promise<void> {
   process.on("SIGINT", shutdown);
   process.on("SIGTERM", shutdown);
 
-  if (getBotToken()) {
+  if (await getBotToken()) {
     await runCommandLoop(() => stopped);
   } else {
     await new Promise(() => undefined);

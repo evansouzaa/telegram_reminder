@@ -13,7 +13,7 @@ function formatWhen(iso: string | null): string {
 export const instant = false;
 
 export default async function DashboardPage() {
-  const [total, active, chatCount, upcomingRows, recentRows, heartbeat, botUsername] = await Promise.all([
+  const [total, active, chatCount, upcomingRows, recentRows, heartbeat, botUsername, botToken] = await Promise.all([
     db.reminder.count(),
     db.reminder.count({ where: { enabled: true } }),
     db.telegramChat.count({ where: { isActive: true } }),
@@ -30,6 +30,7 @@ export default async function DashboardPage() {
     }),
     getSetting("workerHeartbeat"),
     getSetting("botUsername"),
+    getBotToken(),
   ]);
 
   const workerActive = isWorkerActive(heartbeat);
@@ -61,7 +62,7 @@ export default async function DashboardPage() {
         <div className="card">
           <div className="stat-label">Bot</div>
           <div className="stat-value" style={{ fontSize: 18, marginTop: 8 }}>
-            {!getBotToken() ? (
+            {!botToken ? (
               <span className="badge badge-failed">no token</span>
             ) : botUsername ? (
               <span className="badge badge-on">@{botUsername}</span>

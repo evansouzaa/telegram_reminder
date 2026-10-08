@@ -1,3 +1,5 @@
+import { getSetting } from "./db";
+
 const API_BASE = "https://api.telegram.org/bot";
 const MIN_SEND_GAP_MS = 400;
 const MAX_ATTEMPTS = 3;
@@ -60,9 +62,19 @@ export class TelegramApiError extends Error {
   }
 }
 
-export function getBotToken(): string | null {
-  const token = process.env.TELEGRAM_BOT_TOKEN?.trim();
-  return token ? token : null;
+export type BotTokenSource = "env" | "database" | null;
+
+export async function getBotToken(): Promise<string | null> {
+  const fromEnv = process.env.TELEGRAM_BOT_TOKEN?.trim();
+  if (fromEnv) return fromEnv;
+  const fromDb = (await getSetting("telegram_bot_token"))?.trim();
+  return fromDb ? fromDb : null;
+}
+
+export async function botTokenSource(): Promise<BotTokenSource> {
+  if (process.env.TELEGRAM_BOT_TOKEN?.trim()) return "env";
+  const fromDb = (await getSetting("telegram_bot_token"))?.trim();
+  return fromDb ? "database" : null;
 }
 
 function sleep(ms: number): Promise<void> {
@@ -98,10 +110,7 @@ async function readResult(res: Response): Promise<unknown> {
   return body.result;
 }
 
-async function callApi(method: string, payload: Record<string, unknown>): Promise<unknown> {
-  const token = getBotToken();
-  if (!token) throw new TelegramApiError("TELEGRAM_BOT_TOKEN is not configured", 0);
-
+async function callApiWithToken(token: string, method: string, payload: Record<string, unknown>): Promise<unknown> {
   let attempt = 0;
   for (;;) {
     attempt += 1;
@@ -123,9 +132,15 @@ async function callApi(method: string, payload: Record<string, unknown>): Promis
   }
 }
 
+async function callApi(method: string, payload: Record<string, unknown>): Promise<unknown> {
+  const token = await getBotToken();
+  if (!token) throw new TelegramApiError("Telegram bot token is not configured", 0);
+  return callApiWithToken(token, method, payload);
+}
+
 async function callMultipart(method: string, payload: Record<string, unknown>, fileField: string, attachment: AttachmentPayload): Promise<unknown> {
-  const token = getBotToken();
-  if (!token) throw new TelegramApiError("TELEGRAM_BOT_TOKEN is not configured", 0);
+  const token = await getBotToken();
+  if (!token) throw new TelegramApiError("Telegram bot token is not configured", 0);
 
   let attempt = 0;
   for (;;) {
@@ -157,9 +172,19 @@ export async function getMe(): Promise<TelegramUser> {
   return (await callApi("getMe", {})) as TelegramUser;
 }
 
+export async function getMeWithToken(token: string): Promise<TelegramUser> {
+  return (await callApiWithToken(token, "getMe", {})) as TelegramUser;
+}
+
+export async function getChatWithToken(token: string, chatId: string): Promise<TelegramChatInfo> {
+  return (await callApiWithToken(token, "getChat", { chat_id: chatId })) as TelegramChatInfo;
+}
+
 export async function getUpdates(offset: number, timeoutSec: number): Promise<TelegramUpdate[]> {
+  const token = await getBotToken();
+  if (!token) throw new TelegramApiError("Telegram bot token is not configured", 0);
   const res = await fetch(
-    `${API_BASE}${getBotToken()}/getUpdates?offset=${offset}&timeout=${timeoutSec}&allowed_updates=${encodeURIComponent('["message"]')}`,
+    `${API_BASE}${token}/getUpdates?offset=${offset}&timeout=${timeoutSec}&allowed_updates=${encodeURIComponent('["message"]')}`,
     { signal: AbortSignal.timeout((timeoutSec + 10) * 1000) },
   );
   return (await readResult(res)) as TelegramUpdate[];

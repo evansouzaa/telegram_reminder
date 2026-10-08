@@ -1,31 +1,61 @@
+/* Telegram Reminder design system.
+   Palette and shapes follow Telegram Web: Roboto type, #3390ec primary,
+   soft tint pills, 12px cards, hairline dividers. */
+
 :root {
-  --bg: #f6f7f9;
+  --tg-blue: #3390ec;
+  --tg-blue-hover: #2b7ed4;
+  --tg-blue-active: #2570bd;
+  --tg-blue-soft: rgba(51, 144, 236, 0.12);
+  --tg-blue-fg: #ffffff;
+
+  --bg: #f4f4f5;
   --panel: #ffffff;
-  --foreground: #1c2128;
-  --muted: #667085;
-  --border: #e3e6ea;
-  --accent: #2563eb;
-  --accent-fg: #ffffff;
-  --danger: #dc2626;
-  --success: #16a34a;
-  --warning: #d97706;
-  --radius: 10px;
-  --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.1);
+  --field: #f1f2f4;
+  --foreground: #000000;
+  --muted: #707579;
+  --border: #e3e5e8;
+  --hairline: #ebedf0;
+
+  --danger: #df3f40;
+  --danger-soft: rgba(223, 63, 64, 0.1);
+  --success: #359846;
+  --success-soft: rgba(53, 152, 70, 0.12);
+  --warning: #e68600;
+  --warning-soft: rgba(230, 134, 0, 0.13);
+  --neutral-soft: rgba(112, 117, 121, 0.13);
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --ring: 0 0 0 3px rgba(51, 144, 236, 0.28);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0f1216;
-    --panel: #171b21;
-    --foreground: #e6e9ee;
-    --muted: #98a2b3;
-    --border: #2a3038;
-    --accent: #3b82f6;
-    --accent-fg: #ffffff;
-    --danger: #f87171;
-    --success: #4ade80;
-    --warning: #fbbf24;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --tg-blue: #5fa2dd;
+    --tg-blue-hover: #71b0e4;
+    --tg-blue-active: #5295cf;
+    --tg-blue-soft: rgba(95, 162, 221, 0.16);
+
+    --bg: #0e1621;
+    --panel: #17212b;
+    --field: #0e1621;
+    --foreground: #ffffff;
+    --muted: #7f91a4;
+    --border: #242f3d;
+    --hairline: #1f2a38;
+
+    --danger: #e57373;
+    --danger-soft: rgba(229, 115, 115, 0.14);
+    --success: #6fcf7b;
+    --success-soft: rgba(111, 207, 123, 0.14);
+    --warning: #f0a13e;
+    --warning-soft: rgba(240, 161, 62, 0.16);
+    --neutral-soft: rgba(127, 145, 164, 0.18);
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    --ring: 0 0 0 3px rgba(95, 162, 221, 0.32);
     color-scheme: dark;
   }
 }
@@ -44,10 +74,15 @@ body {
 body {
   color: var(--foreground);
   background: var(--bg);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: "Roboto", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   font-size: 15px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--tg-blue-soft);
 }
 
 a {
@@ -55,14 +90,23 @@ a {
   text-decoration: none;
 }
 
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* ---------- App shell ---------- */
+
 .app-header {
   position: sticky;
   top: 0;
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 14px 28px;
+  gap: 28px;
+  padding: 12px 28px;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
 }
@@ -73,6 +117,7 @@ a {
   gap: 10px;
   font-weight: 700;
   font-size: 16px;
+  letter-spacing: 0.01em;
 }
 
 .brand-mark {
@@ -82,30 +127,36 @@ a {
 
 .brand-mark svg {
   display: block;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .app-nav {
   display: flex;
-  gap: 6px;
+  gap: 4px;
 }
 
 .app-nav a {
-  padding: 6px 12px;
+  padding: 7px 14px;
   border-radius: 8px;
   color: var(--muted);
   font-weight: 500;
   font-size: 14px;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .app-nav a:hover {
-  background: var(--bg);
-  color: var(--foreground);
+  background: var(--tg-blue-soft);
+  color: var(--tg-blue);
 }
 
 .app-nav a.active {
-  background: var(--bg);
-  color: var(--foreground);
+  background: var(--tg-blue-soft);
+  color: var(--tg-blue);
+}
+
+.app-nav a:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }
 
 .app-main {
@@ -114,6 +165,8 @@ a {
   margin: 0 auto;
   padding: 28px 20px 64px;
 }
+
+/* ---------- Page head ---------- */
 
 .page-head {
   display: flex;
@@ -126,19 +179,23 @@ a {
 .page-head h1 {
   font-size: 22px;
   font-weight: 700;
+  letter-spacing: 0.005em;
 }
 
 .page-head p {
   color: var(--muted);
   font-size: 14px;
+  margin-top: 2px;
 }
+
+/* ---------- Cards & grids ---------- */
 
 .card {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 18px;
+  padding: 20px;
 }
 
 .card + .card {
@@ -147,8 +204,9 @@ a {
 
 .card h2 {
   font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 12px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  letter-spacing: 0.01em;
 }
 
 .grid {
@@ -173,55 +231,129 @@ a {
   font-size: 26px;
   font-weight: 700;
   margin-top: 4px;
+  font-variant-numeric: tabular-nums;
 }
+
+/* ---------- Buttons ---------- */
 
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 8px 14px;
-  border-radius: 8px;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--panel);
   color: var(--foreground);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
 }
 
 .btn:hover {
-  background: var(--bg);
+  background: var(--tg-blue-soft);
+  border-color: transparent;
+  color: var(--tg-blue);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }
 
 .btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-fg);
+  background: var(--tg-blue);
+  border-color: transparent;
+  color: var(--tg-blue-fg);
+  box-shadow: 0 1px 2px rgba(51, 144, 236, 0.4);
 }
 
 .btn-primary:hover {
-  background: var(--accent);
-  filter: brightness(1.08);
+  background: var(--tg-blue-hover);
+  color: var(--tg-blue-fg);
+}
+
+.btn-primary:active {
+  background: var(--tg-blue-active);
 }
 
 .btn-danger {
   color: var(--danger);
-  border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
+  border-color: var(--border);
+}
+
+.btn-danger:hover {
+  background: var(--danger-soft);
+  border-color: transparent;
+  color: var(--danger);
 }
 
 .btn-sm {
-  padding: 5px 10px;
+  padding: 5px 11px;
   font-size: 13px;
 }
 
+/* Round Telegram-style send button */
+.btn-send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--tg-blue);
+  color: var(--tg-blue-fg);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(51, 144, 236, 0.45);
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.btn-send:hover {
+  background: var(--tg-blue-hover);
+}
+
+.btn-send:active {
+  background: var(--tg-blue-active);
+  transform: scale(0.96);
+}
+
+.btn-send:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.btn-send:disabled {
+  background: var(--muted);
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.btn-send svg {
+  display: block;
+  margin-left: 2px;
+}
+
+/* ---------- Tables ---------- */
+
 .table-wrap {
   overflow-x: auto;
+  border-radius: var(--radius-sm);
 }
 
 table.table {
@@ -236,15 +368,24 @@ table.table {
   font-weight: 500;
   font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   padding: 8px 10px;
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 
 .table td {
-  padding: 10px;
-  border-bottom: 1px solid var(--border);
-  vertical-align: top;
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--hairline);
+  vertical-align: middle;
+}
+
+.table tbody tr {
+  transition: background 0.12s ease;
+}
+
+.table tbody tr:hover {
+  background: var(--tg-blue-soft);
 }
 
 .table tr:last-child td {
@@ -258,38 +399,43 @@ table.table {
   white-space: nowrap;
 }
 
+/* ---------- Badges (soft Telegram pills) ---------- */
+
 .badge {
   display: inline-block;
-  padding: 2px 9px;
+  padding: 3px 10px;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 600;
-  border: 1px solid var(--border);
+  font-weight: 700;
+  letter-spacing: 0.02em;
   color: var(--muted);
-  background: var(--bg);
+  background: var(--neutral-soft);
+  border: none;
+  white-space: nowrap;
 }
 
-.badge-on {
+.badge-on,
+.badge-sent {
   color: var(--success);
-  border-color: color-mix(in srgb, var(--success) 45%, var(--border));
+  background: var(--success-soft);
 }
 
 .badge-off {
   color: var(--warning);
-  border-color: color-mix(in srgb, var(--warning) 45%, var(--border));
-}
-
-.badge-sent {
-  color: var(--success);
+  background: var(--warning-soft);
 }
 
 .badge-failed {
   color: var(--danger);
+  background: var(--danger-soft);
 }
 
 .badge-missed {
   color: var(--warning);
+  background: var(--warning-soft);
 }
+
+/* ---------- Forms ---------- */
 
 .field {
   display: flex;
@@ -300,7 +446,8 @@ table.table {
 
 .field label {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--muted);
 }
 
 .field .hint {
@@ -312,13 +459,28 @@ table.table {
 .select,
 .textarea {
   width: 100%;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--panel);
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: var(--field);
   color: var(--foreground);
   font-size: 14px;
   font-family: inherit;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:hover,
+.select:hover,
+.textarea:hover {
+  background: var(--tg-blue-soft);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  background: var(--panel);
+  box-shadow: var(--ring);
 }
 
 .textarea {
@@ -326,12 +488,19 @@ table.table {
   resize: vertical;
 }
 
-.input:focus,
-.select:focus,
-.textarea:focus {
-  outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
-  outline-offset: 1px;
-  border-color: var(--accent);
+.select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23707579' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 34px;
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--tg-blue);
+  cursor: pointer;
 }
 
 .check-grid {
@@ -345,6 +514,7 @@ table.table {
   align-items: center;
   gap: 7px;
   font-size: 14px;
+  cursor: pointer;
 }
 
 .form-row {
@@ -359,30 +529,51 @@ table.table {
   margin-top: 6px;
 }
 
+/* Telegram-style message composer */
+.composer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.composer .select,
+.composer .input {
+  flex: 1;
+  border-radius: 999px;
+  padding: 11px 18px;
+}
+
+/* ---------- Alerts ---------- */
+
 .alert {
-  padding: 10px 12px;
-  border-radius: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
   margin-bottom: 14px;
-  border: 1px solid var(--border);
+  border: none;
 }
 
 .alert-error {
   color: var(--danger);
-  border-color: color-mix(in srgb, var(--danger) 45%, var(--border));
-  background: color-mix(in srgb, var(--danger) 8%, transparent);
+  background: var(--danger-soft);
 }
 
 .alert-success {
   color: var(--success);
-  border-color: color-mix(in srgb, var(--success) 45%, var(--border));
-  background: color-mix(in srgb, var(--success) 8%, transparent);
+  background: var(--success-soft);
 }
+
+/* ---------- Misc ---------- */
 
 .empty {
   color: var(--muted);
   font-size: 14px;
-  padding: 8px 0;
+  padding: 12px 0;
+  text-align: center;
+}
+
+td.empty {
+  text-align: left;
 }
 
 .muted {
@@ -390,7 +581,7 @@ table.table {
 }
 
 .mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 13px;
 }
 
@@ -398,8 +589,8 @@ table.table {
   display: flex;
   gap: 8px;
   font-size: 14px;
-  padding: 6px 0;
-  border-bottom: 1px dashed var(--border);
+  padding: 7px 0;
+  border-bottom: 1px solid var(--hairline);
 }
 
 .kv:last-child {

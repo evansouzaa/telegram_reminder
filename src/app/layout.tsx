@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import NavLinks from "@/components/NavLinks";
 import BrandMark from "@/components/BrandMark";
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Telegram Reminder",
@@ -17,12 +24,12 @@ const NAV = [
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en">
+    <html lang="en" className={roboto.className}>
       <body>
         <header className="app-header">
           <div className="brand">
             <span className="brand-mark">
-              <BrandMark size={22} />
+              <BrandMark size={24} />
             </span>
             Telegram Reminder
           </div>

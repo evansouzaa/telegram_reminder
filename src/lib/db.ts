@@ -38,6 +38,10 @@ export async function setSetting(key: string, value: string): Promise<void> {
   await db.setting.upsert({ where: { key }, create: { key, value }, update: { value } });
 }
 
+export async function deleteSetting(key: string): Promise<void> {
+  await db.setting.deleteMany({ where: { key } });
+}
+
 export async function getTimezone(): Promise<string> {
   const saved = await getSetting("timezone");
   if (saved) return saved;

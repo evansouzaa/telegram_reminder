@@ -2,8 +2,6 @@ import { db } from "@/lib/db";
 import { toChatView, toReminderView } from "@/lib/dto";
 import RemindersClient from "@/components/RemindersClient";
 
-
-
 export const instant = false;
 
 export default async function RemindersPage() {

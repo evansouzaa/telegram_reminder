@@ -155,7 +155,7 @@ export default function RemindersClient({
       return;
     }
     if (!form.chatId) {
-      setError("Link a chat first: open the bot in Telegram and send /start");
+      setError("Link a chat first in Settings, or send /start to the bot in Telegram");
       return;
     }
     if (form.mode === "ONCE" && !form.runAt) {
@@ -297,7 +297,7 @@ export default function RemindersClient({
                   </option>
                 ))}
               </select>
-              <span className="hint">Open the bot in Telegram and send /start to link a chat.</span>
+              <span className="hint">Link a chat in Settings, or send /start to the bot in Telegram.</span>
             </div>
 
             <div className="field">

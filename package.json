@@ -2,15 +2,27 @@
   "name": "telegran_reminder",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "concurrently --kill-others --names web,worker --prefix-colors blue,magenta \"next dev\" \"tsx watch src/server/worker.ts\"",
-    "start": "concurrently --kill-others --names web,worker --prefix-colors blue,magenta \"next start\" \"tsx src/server/worker.ts\"",
+    "predev": "node scripts/ensure-env.mjs",
+    "start": "node scripts/start.mjs",
+    "build": "node scripts/ensure-env.mjs && prisma generate && next build",
+    "postinstall": "node scripts/ensure-env.mjs && prisma generate",
     "worker": "tsx src/server/worker.ts",
-    "build": "next build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "db:migrate": "prisma migrate dev",
-    "db:generate": "prisma generate"
+    "db:deploy": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "pm2:start": "node scripts/preflight.mjs && pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop ecosystem.config.js",
+    "pm2:restart": "pm2 restart ecosystem.config.js",
+    "pm2:delete": "pm2 delete ecosystem.config.js",
+    "pm2:logs": "pm2 logs",
+    "pm2:save": "pm2 save"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
@@ -19,6 +31,7 @@
     "prisma": "^6.19.3",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "tsx": "^4.23.15",
     "zod": "^4.6.5"
   },
   "devDependencies": {
@@ -28,7 +41,7 @@
     "concurrently": "^10.0.5",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
-    "tsx": "^4.23.15",
+    "pm2": "^7.0.4",
     "typescript": "^5"
   }
 }
